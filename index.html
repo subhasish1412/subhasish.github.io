@@ -122,6 +122,7 @@
     position: relative;
     overflow: hidden;
     transition: color 0.3s, border-color 0.3s;
+    z-index: 1;
   }
   .nav-links a::before {
     content: '';
@@ -129,7 +130,7 @@
     inset: 0;
     background: var(--white);
     transform: translateX(-101%);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.85, 0, 0.15, 1);
     z-index: -1;
   }
   .nav-links a:hover { color: var(--black); border-color: var(--white); }
@@ -211,7 +212,7 @@
     inset: 0;
     background: var(--white);
     transform: translateX(-101%);
-    transition: transform 0.35s ease;
+    transition: transform 0.35s cubic-bezier(0.85, 0, 0.15, 1);
     z-index: -1;
   }
   .btn:hover { color: var(--black); }
@@ -232,6 +233,7 @@
     overflow: hidden;
     cursor: default;
     transition: transform 0.35s ease, box-shadow 0.35s ease;
+    z-index: 1;
   }
   .stat-card::after {
     content: '';
@@ -239,7 +241,7 @@
     inset: 0;
     background: #2a2a2a;
     transform: translateX(-101%);
-    transition: transform 0.4s ease;
+    transition: transform 0.4s cubic-bezier(0.85, 0, 0.15, 1);
     z-index: -1;
   }
   .stat-card:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(0,0,0,0.18); }
@@ -287,49 +289,78 @@
     width: 3rem; height: 3rem; border-radius: 50%; background: var(--black); color: var(--white);
     display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 0.6rem; z-index: 1;
   }
-  .tl-content { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 4px; padding: 1.5rem; position: relative; overflow: hidden; transition: border-color 0.35s; }
-  .tl-content::before { content: ''; position: absolute; inset: 0; background: #f9f9f9; transform: translateX(-101%); transition: transform 0.4s ease; z-index: -1; }
+  .tl-content { 
+    background: var(--card-bg); 
+    border: 1.5px solid var(--border); 
+    border-radius: 4px; 
+    padding: 1.5rem; 
+    position: relative; 
+    overflow: hidden; 
+    transition: border-color 0.35s; 
+    z-index: 1;
+  }
+  .tl-content::before { 
+    content: ''; 
+    position: absolute; 
+    inset: 0; 
+    background: var(--black); 
+    transform: translateX(-101%); 
+    transition: transform 0.4s cubic-bezier(0.85, 0, 0.15, 1); 
+    z-index: -1; 
+  }
   .tl-content:hover { border-color: var(--black); }
   .tl-content:hover::before { transform: translateX(0); }
+  
+  .tl-content:hover .tl-role { color: var(--white); }
+  .tl-content:hover .tl-company { color: #cccccc; }
+  .tl-content:hover .tl-bullets li { color: #e4e4e4; }
+  .tl-content:hover .tl-bullets li::before { color: var(--white); }
+  .tl-content:hover .tl-period { background: var(--white); color: var(--black); }
+
   .tl-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.3rem; }
-  .tl-role { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
-  .tl-period { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--white); background: var(--black); padding: 0.2rem 0.6rem; border-radius: 2px; }
-  .tl-company { font-size: 0.82rem; font-weight: 500; color: var(--muted); margin-bottom: 0.8rem; }
+  .tl-role { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; transition: color 0.3s; }
+  .tl-period { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--white); background: var(--black); padding: 0.2rem 0.6rem; border-radius: 2px; transition: background 0.3s, color 0.3s; }
+  .tl-company { font-size: 0.82rem; font-weight: 500; color: var(--muted); margin-bottom: 0.8rem; transition: color 0.3s; }
   .tl-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
-  .tl-bullets li { font-size: 0.88rem; color: var(--highlight); padding-left: 1.2rem; position: relative; }
-  .tl-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--black); }
+  .tl-bullets li { font-size: 0.88rem; color: var(--highlight); padding-left: 1.2rem; position: relative; transition: color 0.3s; }
+  .tl-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--black); transition: color 0.3s; }
 
   .skills-wrapper { max-height: 65vh; overflow-y: auto; z-index: 1; position: relative; }
   .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.8rem; }
   .skill-card {
     background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem;
     display: flex; align-items: center; gap: 1rem; position: relative; overflow: hidden; transition: border-color 0.3s;
+    z-index: 1;
   }
-  .skill-card::before { content: ''; position: absolute; inset: 0; background: var(--black); transform: translateX(-101%); transition: transform 0.3s ease; z-index: -1; }
+  .skill-card::before { content: ''; position: absolute; inset: 0; background: var(--black); transform: translateX(-101%); transition: transform 0.4s cubic-bezier(0.85, 0, 0.15, 1); z-index: -1; }
   .skill-card:hover { border-color: var(--black); }
   .skill-card:hover::before { transform: translateX(0); }
   .skill-card:hover .skill-name { color: var(--white); }
   .skill-icon { font-size: 1.1rem; z-index: 1; }
-  .skill-name { font-size: 0.85rem; font-weight: 500; z-index: 1; transition: color 0.3s; }
+  .skill-name { font-size: 0.85rem; font-weight: 500; z-index: 1; transition: color 0.3s; color: var(--ink); }
 
   .certs-wrapper { max-height: 65vh; overflow-y: auto; z-index: 1; position: relative; }
   .certs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.8rem; }
-  .cert-card { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 4px; padding: 1.2rem; position: relative; overflow: hidden; transition: border-color 0.3s; }
-  .cert-card::before { content: ''; position: absolute; inset: 0; background: var(--black); transform: translateX(-101%); transition: transform 0.35s ease; z-index: -1; }
+  .cert-card { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 4px; padding: 1.2rem; position: relative; overflow: hidden; transition: border-color 0.3s; z-index: 1; }
+  .cert-card::before { content: ''; position: absolute; inset: 0; background: var(--black); transform: translateX(-101%); transition: transform 0.4s cubic-bezier(0.85, 0, 0.15, 1); z-index: -1; }
   .cert-card:hover { border-color: var(--black); }
   .cert-card:hover::before { transform: translateX(0); }
-  .cert-card:hover .cert-issuer, .cert-card:hover .cert-name, .cert-card:hover .cert-date { color: var(--white); }
+  .cert-card:hover .cert-issuer { color: #cccccc; }
+  .cert-card:hover .cert-name { color: var(--white); }
+  .cert-card:hover .cert-date { color: #aaaaaa; }
   .cert-issuer { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--highlight); margin-bottom: 0.3rem; z-index: 1; transition: color 0.3s; }
-  .cert-name { font-size: 0.85rem; font-weight: 500; line-height: 1.4; z-index: 1; transition: color 0.3s; }
+  .cert-name { font-size: 0.85rem; font-weight: 500; line-height: 1.4; z-index: 1; transition: color 0.3s; color: var(--ink); }
   .cert-date { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; z-index: 1; transition: color 0.3s; }
 
   .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem; z-index: 1; position: relative; }
-  .edu-card { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 4px; padding: 1.5rem; position: relative; overflow: hidden; transition: border-color 0.3s; }
-  .edu-card::before { content: ''; position: absolute; inset: 0; background: var(--black); transform: translateX(-101%); transition: transform 0.35s ease; z-index: -1; }
+  .edu-card { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 4px; padding: 1.5rem; position: relative; overflow: hidden; transition: border-color 0.3s; z-index: 1; }
+  .edu-card::before { content: ''; position: absolute; inset: 0; background: var(--black); transform: translateX(-101%); transition: transform 0.4s cubic-bezier(0.85, 0, 0.15, 1); z-index: -1; }
   .edu-card:hover { border-color: var(--black); }
   .edu-card:hover::before { transform: translateX(0); }
-  .edu-card:hover .edu-degree, .edu-card:hover .edu-uni, .edu-card:hover .edu-meta { color: var(--white); }
-  .edu-degree { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.3rem; z-index: 1; transition: color 0.3s; }
+  .edu-card:hover .edu-degree { color: var(--white); }
+  .edu-card:hover .edu-uni { color: #cccccc; }
+  .edu-card:hover .edu-meta { color: #aaaaaa; }
+  .edu-degree { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.3rem; z-index: 1; transition: color 0.3s; color: var(--ink); }
   .edu-uni { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.5rem; z-index: 1; transition: color 0.3s; }
   .edu-meta { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--highlight); z-index: 1; transition: color 0.3s; }
 
@@ -341,13 +372,15 @@
   .contact-item {
     display: flex; align-items: center; gap: 1rem; background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 4px;
     padding: 0.9rem 1.2rem; text-decoration: none; color: var(--ink); position: relative; overflow: hidden; transition: border-color 0.3s;
+    z-index: 1;
   }
-  .contact-item::before { content: ''; position: absolute; inset: 0; background: var(--black); transform: translateX(-101%); transition: transform 0.3s ease; z-index: -1; }
+  .contact-item::before { content: ''; position: absolute; inset: 0; background: var(--black); transform: translateX(-101%); transition: transform 0.4s cubic-bezier(0.85, 0, 0.15, 1); z-index: -1; }
   .contact-item:hover { border-color: var(--black); }
   .contact-item:hover::before { transform: translateX(0); }
-  .contact-item:hover .contact-item-label, .contact-item:hover .contact-item-value, .contact-item:hover .ci-icon { color: var(--white); }
+  .contact-item:hover .contact-item-label { color: #aaaaaa; }
+  .contact-item:hover .contact-item-value, .contact-item:hover .ci-icon { color: var(--white); }
   .contact-item-label { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); z-index: 1; transition: color 0.3s; }
-  .contact-item-value { font-size: 0.85rem; font-weight: 500; z-index: 1; transition: color 0.3s; }
+  .contact-item-value { font-size: 0.85rem; font-weight: 500; z-index: 1; transition: color 0.3s; color: var(--ink); }
   .ci-icon { font-size: 1.1rem; z-index: 1; transition: color 0.3s; }
 
   footer {
@@ -506,7 +539,7 @@
               <div class="tl-role">Account Manager</div>
               <div class="tl-period">Jul 2022 — Jan 2024</div>
             </div>
-            <div class="tl-company">iMocah · Pune · Full-time</div>
+            <div class="tl-company">iMocha · Pune · Full-time</div>
             <ul class="tl-bullets">
               <li>Scaled a $159K ARR portfolio of 80 accounts across the US and ROW, delivering 11x growth through precise SPOC engagement.</li>
               <li>Maintained an 86% retention rate while overachieving sales targets by 125% in Q1 2023 for the international market.</li>
