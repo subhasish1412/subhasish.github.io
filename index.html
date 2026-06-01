@@ -11,24 +11,75 @@
     --highlight: #444444;
     --muted: #777777;
     --bg: #ffffff;
-    --section-alt: #f7f7f7;
+    --section-alt: #fcfcfc;
     --card-bg: #ffffff;
     --border: #e4e4e4;
     --black: #111111;
     --white: #ffffff;
   }
+  
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
+  
+  html, body {
+    overflow: hidden;
     background: var(--bg);
     color: var(--ink);
     font-family: 'DM Sans', sans-serif;
     font-size: 16px;
-    line-height: 1.7;
-    overflow-x: hidden;
+    height: 100vh;
+    width: 100vw;
   }
 
-  /* ── NAV ── */
+  .book-container {
+    display: flex;
+    flex-direction: row;
+    width: 500vw; 
+    height: 100vh;
+    transition: transform 0.7s cubic-bezier(0.85, 0, 0.15, 1);
+    will-change: transform;
+  }
+
+  .page-panel {
+    width: 100vw;
+    height: 100vh;
+    flex-shrink: 0;
+    position: relative;
+    padding: 100px 8vw 60px 8vw;
+    overflow-y: auto; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .page-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: 
+      radial-gradient(var(--border) 1.5px, transparent 1.5px),
+      linear-gradient(135deg, rgba(240,240,240,0.4) 25%, transparent 25%, transparent 50%, rgba(240,240,240,0.4) 50%, rgba(240,240,240,0.4) 75%, transparent 75%, transparent);
+    background-size: 40px 40px, 200px 200px;
+    opacity: 0.45;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .page-panel:nth-child(even) {
+    background-color: var(--section-alt);
+  }
+  .page-panel:nth-child(even)::after {
+    content: '';
+    position: absolute;
+    bottom: -10%; right: -5%;
+    width: 40vw; height: 50vh;
+    background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+    transform: rotate(-12deg);
+    border-radius: 8px;
+    z-index: 0;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -37,21 +88,19 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.2rem 6vw;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--border);
+    background: var(--black); 
+    border-bottom: 1px solid #222222;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   }
   .nav-logo {
     font-family: 'Playfair Display', serif;
     font-size: 1.15rem;
     font-weight: 700;
-    color: var(--ink);
+    color: var(--white); 
     text-decoration: none;
-    /* slide in from left */
     animation: slideInLeft 0.6s ease both;
   }
-  .nav-links { display: flex; gap: 1rem; list-style: none; }
-  /* each nav tab slides in from left with staggered delay */
+  .nav-links { display: flex; gap: 0.5rem; list-style: none; }
   .nav-links li { animation: slideInLeft 0.5s ease both; }
   .nav-links li:nth-child(1) { animation-delay: 0.05s; }
   .nav-links li:nth-child(2) { animation-delay: 0.1s; }
@@ -65,7 +114,7 @@
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: #cccccc; 
     text-decoration: none;
     padding: 0.4rem 0.9rem;
     border: 1.5px solid transparent;
@@ -74,30 +123,31 @@
     overflow: hidden;
     transition: color 0.3s, border-color 0.3s;
   }
-  /* sliding fill effect on nav links */
   .nav-links a::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--black);
+    background: var(--white);
     transform: translateX(-101%);
     transition: transform 0.3s ease;
     z-index: -1;
   }
-  .nav-links a:hover { color: var(--white); border-color: var(--black); }
+  .nav-links a:hover { color: var(--black); border-color: var(--white); }
   .nav-links a:hover::before { transform: translateX(0); }
+  
+  .nav-links a.active {
+    border-color: var(--white);
+    color: var(--black);
+    background: var(--white);
+  }
 
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
+  .hero-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.1fr 0.9fr;
     align-items: center;
-    padding: 0 6vw;
-    padding-top: 80px;
     gap: 4rem;
     position: relative;
-    overflow: hidden;
+    z-index: 1;
   }
   .hero-left { position: relative; z-index: 1; }
   .hero-eyebrow {
@@ -110,7 +160,6 @@
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    animation: slideInLeft 0.6s ease both;
   }
   .hero-eyebrow::before {
     content: '';
@@ -121,31 +170,23 @@
   }
   .hero-name {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(2.8rem, 5vw, 5rem);
+    font-size: clamp(2.5rem, 4.5vw, 4.5rem);
     font-weight: 900;
-    line-height: 1.05;
+    line-height: 1.1;
     color: var(--ink);
     margin-bottom: 1.2rem;
-    animation: slideInLeft 0.6s ease 0.1s both;
   }
   .hero-name span { color: var(--highlight); }
   .hero-title {
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 400;
     color: var(--muted);
     margin-bottom: 2rem;
     max-width: 480px;
     line-height: 1.7;
-    animation: slideInLeft 0.6s ease 0.2s both;
   }
-  .hero-ctas {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    animation: slideInLeft 0.6s ease 0.3s both;
-  }
+  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
 
-  /* ── BUTTONS — black box white text ── */
   .btn {
     display: inline-block;
     padding: 0.75rem 1.8rem;
@@ -162,8 +203,8 @@
     color: var(--white);
     background: var(--black);
     transition: color 0.35s;
+    z-index: 1;
   }
-  /* sliding reveal: black fills left→right on hover-out, white fills left→right on hover */
   .btn::before {
     content: '';
     position: absolute;
@@ -171,47 +212,27 @@
     background: var(--white);
     transform: translateX(-101%);
     transition: transform 0.35s ease;
-    z-index: 0;
+    z-index: -1;
   }
   .btn:hover { color: var(--black); }
   .btn:hover::before { transform: translateX(0); }
-  .btn span { position: relative; z-index: 1; }
-
-  /* secondary outline btn */
-  .btn-outline {
-    background: transparent;
-    color: var(--black);
-  }
+  
+  .btn-outline { background: transparent; color: var(--black); }
   .btn-outline::before { background: var(--black); }
   .btn-outline:hover { color: var(--white); }
 
-  /* ── HERO RIGHT ── */
-  .hero-right {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    animation: slideInLeft 0.6s ease 0.4s both;
-  }
-  .stat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
-  /* stat cards: BLACK bg, WHITE text */
+  .hero-right { display: flex; flex-direction: column; gap: 1rem; z-index: 1; }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   .stat-card {
     background: var(--black);
     border: 1px solid var(--black);
-    padding: 1.8rem 1.4rem;
+    padding: 1.5rem 1.2rem;
     border-radius: 4px;
     position: relative;
     overflow: hidden;
     cursor: default;
     transition: transform 0.35s ease, box-shadow 0.35s ease;
   }
-  /* left-to-right hover sweep with slightly lighter black */
   .stat-card::after {
     content: '';
     position: absolute;
@@ -219,746 +240,438 @@
     background: #2a2a2a;
     transform: translateX(-101%);
     transition: transform 0.4s ease;
-    z-index: 0;
+    z-index: -1;
   }
   .stat-card:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(0,0,0,0.18); }
   .stat-card:hover::after { transform: translateX(0); }
   .stat-number {
     font-family: 'Playfair Display', serif;
-    font-size: 2.4rem;
+    font-size: 2.2rem;
     font-weight: 900;
     color: var(--white);
     line-height: 1;
     margin-bottom: 0.3rem;
-    position: relative; z-index: 1;
   }
   .stat-number em { color: #cccccc; font-style: normal; }
-  .stat-label {
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    color: #aaaaaa;
-    text-transform: uppercase;
-    position: relative; z-index: 1;
-  }
+  .stat-label { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; color: #aaaaaa; text-transform: uppercase; }
+  
   .location-badge {
-    background: var(--card-bg);
+    background: var(--white);
     border: 1.5px solid var(--border);
-    padding: 1rem 1.4rem;
+    padding: 0.9rem 1.2rem;
     border-radius: 4px;
     display: flex;
     align-items: center;
     gap: 0.8rem;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: var(--muted);
-    transition: border-color 0.3s;
   }
-  .location-badge:hover { border-color: var(--black); }
-
-  /* ── SECTIONS ── */
-  section { padding: 6rem 6vw; }
-  section:nth-child(even) { background: var(--section-alt); }
 
   .section-header {
     display: flex;
     align-items: baseline;
     gap: 1.2rem;
-    margin-bottom: 3.5rem;
-    /* slide in from left when visible */
-    opacity: 0;
-    transform: translateX(-40px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .section-header.visible { opacity: 1; transform: translateX(0); }
-
-  .section-num {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--highlight);
-    letter-spacing: 0.1em;
-  }
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.8rem, 3vw, 2.6rem);
-    font-weight: 700;
-    color: var(--ink);
-    line-height: 1.1;
-  }
-  .section-line {
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-    align-self: center;
-  }
-
-  /* ── SCROLL-REVEAL BASE ── */
-  .reveal {
-    opacity: 0;
-    transform: translateX(-50px);
-    transition: opacity 0.55s ease, transform 0.55s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  /* ── TIMELINE ── */
-  .timeline { position: relative; }
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 1.5rem;
-    top: 0; bottom: 0;
-    width: 1px;
-    background: var(--border);
-  }
-  .tl-item {
-    display: grid;
-    grid-template-columns: 3rem 1fr;
-    gap: 2rem;
-    margin-bottom: 3rem;
-    position: relative;
-  }
-  .tl-dot {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    background: var(--black);
-    color: var(--white);
-    border: 2px solid var(--black);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    font-weight: 500;
+    margin-bottom: 2rem;
     position: relative;
     z-index: 1;
-    flex-shrink: 0;
-    transition: transform 0.3s;
   }
-  .tl-item:hover .tl-dot { transform: scale(1.12); }
-  .tl-content {
-    background: var(--card-bg);
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    padding: 1.8rem 2rem;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.35s, box-shadow 0.35s;
-  }
-  /* left-to-right hover sweep on cards */
-  .tl-content::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: #f2f2f2;
-    transform: translateX(-101%);
-    transition: transform 0.4s ease;
-    z-index: 0;
-  }
-  .tl-content:hover { border-color: var(--black); box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
-  .tl-content:hover::before { transform: translateX(0); }
-  .tl-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    position: relative; z-index: 1;
-  }
-  .tl-role {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--ink);
-  }
-  .tl-period {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--white);
-    letter-spacing: 0.08em;
-    background: var(--black);
-    padding: 0.25rem 0.7rem;
-    border-radius: 2px;
-  }
-  .tl-company {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--muted);
-    margin-bottom: 1rem;
-    position: relative; z-index: 1;
-  }
-  .tl-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; position: relative; z-index: 1; }
-  .tl-bullets li {
-    font-size: 0.9rem;
-    color: var(--highlight);
-    padding-left: 1.2rem;
-    position: relative;
-    line-height: 1.6;
-  }
-  .tl-bullets li::before {
-    content: '→';
-    position: absolute;
-    left: 0;
-    color: var(--black);
-    font-size: 0.8rem;
-  }
+  .section-num { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--highlight); letter-spacing: 0.1em; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 2.5vw, 2.2rem); font-weight: 700; color: var(--ink); }
+  .section-line { flex: 1; height: 1px; background: var(--border); align-self: center; }
 
-  /* ── SKILLS ── */
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1rem;
+  .timeline-container { position: relative; z-index: 1; max-height: 62vh; overflow-y: auto; padding-right: 0.5rem; }
+  .timeline { position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 1.5rem; top: 0; bottom: 0; width: 1px; background: var(--border); }
+  .tl-item { display: grid; grid-template-columns: 3rem 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+  .tl-dot {
+    width: 3rem; height: 3rem; border-radius: 50%; background: var(--black); color: var(--white);
+    display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 0.6rem; z-index: 1;
   }
+  .tl-content { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 4px; padding: 1.5rem; position: relative; overflow: hidden; transition: border-color 0.35s; }
+  .tl-content::before { content: ''; position: absolute; inset: 0; background: #f9f9f9; transform: translateX(-101%); transition: transform 0.4s ease; z-index: -1; }
+  .tl-content:hover { border-color: var(--black); }
+  .tl-content:hover::before { transform: translateX(0); }
+  .tl-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.3rem; }
+  .tl-role { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
+  .tl-period { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--white); background: var(--black); padding: 0.2rem 0.6rem; border-radius: 2px; }
+  .tl-company { font-size: 0.82rem; font-weight: 500; color: var(--muted); margin-bottom: 0.8rem; }
+  .tl-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+  .tl-bullets li { font-size: 0.88rem; color: var(--highlight); padding-left: 1.2rem; position: relative; }
+  .tl-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--black); }
+
+  .skills-wrapper { max-height: 65vh; overflow-y: auto; z-index: 1; position: relative; }
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.8rem; }
   .skill-card {
-    background: var(--card-bg);
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    padding: 1.2rem 1.4rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    position: relative;
-    overflow: hidden;
-    cursor: default;
-    transition: border-color 0.3s, color 0.3s;
+    background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem;
+    display: flex; align-items: center; gap: 1rem; position: relative; overflow: hidden; transition: border-color 0.3s;
   }
-  .skill-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--black);
-    transform: translateX(-101%);
-    transition: transform 0.35s ease;
-    z-index: 0;
-  }
+  .skill-card::before { content: ''; position: absolute; inset: 0; background: var(--black); transform: translateX(-101%); transition: transform 0.3s ease; z-index: -1; }
   .skill-card:hover { border-color: var(--black); }
   .skill-card:hover::before { transform: translateX(0); }
   .skill-card:hover .skill-name { color: var(--white); }
-  .skill-card:hover .skill-icon { filter: grayscale(0) brightness(1.4); }
-  .skill-icon {
-    width: 2.2rem;
-    height: 2.2rem;
+  .skill-icon { font-size: 1.1rem; z-index: 1; }
+  .skill-name { font-size: 0.85rem; font-weight: 500; z-index: 1; transition: color 0.3s; }
+
+  .certs-wrapper { max-height: 65vh; overflow-y: auto; z-index: 1; position: relative; }
+  .certs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.8rem; }
+  .cert-card { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 4px; padding: 1.2rem; position: relative; overflow: hidden; transition: border-color 0.3s; }
+  .cert-card::before { content: ''; position: absolute; inset: 0; background: var(--black); transform: translateX(-101%); transition: transform 0.35s ease; z-index: -1; }
+  .cert-card:hover { border-color: var(--black); }
+  .cert-card:hover::before { transform: translateX(0); }
+  .cert-card:hover .cert-issuer, .cert-card:hover .cert-name, .cert-card:hover .cert-date { color: var(--white); }
+  .cert-issuer { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--highlight); margin-bottom: 0.3rem; z-index: 1; transition: color 0.3s; }
+  .cert-name { font-size: 0.85rem; font-weight: 500; line-height: 1.4; z-index: 1; transition: color 0.3s; }
+  .cert-date { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; z-index: 1; transition: color 0.3s; }
+
+  .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem; z-index: 1; position: relative; }
+  .edu-card { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 4px; padding: 1.5rem; position: relative; overflow: hidden; transition: border-color 0.3s; }
+  .edu-card::before { content: ''; position: absolute; inset: 0; background: var(--black); transform: translateX(-101%); transition: transform 0.35s ease; z-index: -1; }
+  .edu-card:hover { border-color: var(--black); }
+  .edu-card:hover::before { transform: translateX(0); }
+  .edu-card:hover .edu-degree, .edu-card:hover .edu-uni, .edu-card:hover .edu-meta { color: var(--white); }
+  .edu-degree { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.3rem; z-index: 1; transition: color 0.3s; }
+  .edu-uni { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.5rem; z-index: 1; transition: color 0.3s; }
+  .edu-meta { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--highlight); z-index: 1; transition: color 0.3s; }
+
+  .contact-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; z-index: 1; position: relative; }
+  .contact-intro { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 700; line-height: 1.2; }
+  .contact-intro span { color: var(--highlight); }
+  .contact-sub { font-size: 0.9rem; color: var(--muted); max-width: 400px; margin-top: 0.5rem; }
+  .contact-links { display: flex; flex-direction: column; gap: 0.6rem; }
+  .contact-item {
+    display: flex; align-items: center; gap: 1rem; background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 4px;
+    padding: 0.9rem 1.2rem; text-decoration: none; color: var(--ink); position: relative; overflow: hidden; transition: border-color 0.3s;
+  }
+  .contact-item::before { content: ''; position: absolute; inset: 0; background: var(--black); transform: translateX(-101%); transition: transform 0.3s ease; z-index: -1; }
+  .contact-item:hover { border-color: var(--black); }
+  .contact-item:hover::before { transform: translateX(0); }
+  .contact-item:hover .contact-item-label, .contact-item:hover .contact-item-value, .contact-item:hover .ci-icon { color: var(--white); }
+  .contact-item-label { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); z-index: 1; transition: color 0.3s; }
+  .contact-item-value { font-size: 0.85rem; font-weight: 500; z-index: 1; transition: color 0.3s; }
+  .ci-icon { font-size: 1.1rem; z-index: 1; transition: color 0.3s; }
+
+  footer {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 100;
+    text-align: center;
+    padding: 1rem 6vw;
+    background: var(--black); 
+    border-top: 1px solid #222222;
+    font-size: 0.75rem;
+    color: #aaaaaa; 
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+  }
+  footer a { color: var(--white); text-decoration: none; font-weight: 600; transition: text-shadow 0.3s; }
+  footer a:hover { text-shadow: 0 0 8px rgba(255,255,255,0.6); text-decoration: underline; }
+
+  .page-nav-arrows {
+    position: fixed;
+    bottom: 4.5rem;
+    right: 6vw;
+    display: flex;
+    gap: 0.8rem;
+    z-index: 110;
+  }
+  .arrow-btn {
+    width: 2.8rem;
+    height: 2.8rem;
+    background: var(--black);
+    color: var(--white);
+    border: 1px solid var(--black);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
-    flex-shrink: 0;
-    position: relative; z-index: 1;
-    transition: filter 0.3s;
+    cursor: pointer;
+    border-radius: 2px;
+    font-weight: bold;
+    transition: background 0.3s, color 0.3s, transform 0.2s;
   }
-  .skill-name {
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: var(--ink);
-    position: relative; z-index: 1;
-    transition: color 0.3s;
-  }
+  .arrow-btn:hover { background: var(--white); color: var(--black); transform: scale(1.05); }
 
-  /* ── CERTS ── */
-  .certs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
-  }
-  .cert-card {
-    background: var(--card-bg);
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    padding: 1.4rem 1.6rem;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s;
-  }
-  .cert-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--black);
-    transform: translateX(-101%);
-    transition: transform 0.38s ease;
-    z-index: 0;
-  }
-  .cert-card:hover { border-color: var(--black); }
-  .cert-card:hover::before { transform: translateX(0); }
-  .cert-card:hover .cert-issuer,
-  .cert-card:hover .cert-name,
-  .cert-card:hover .cert-date { color: var(--white); }
-  .cert-issuer {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--highlight);
-    margin-bottom: 0.4rem;
-    position: relative; z-index: 1;
-    transition: color 0.3s;
-  }
-  .cert-name {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--ink);
-    line-height: 1.4;
-    position: relative; z-index: 1;
-    transition: color 0.3s;
-  }
-  .cert-date {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-top: 0.4rem;
-    position: relative; z-index: 1;
-    transition: color 0.3s;
-  }
-
-  /* ── EDUCATION ── */
-  .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-  .edu-card {
-    background: var(--card-bg);
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    padding: 2rem;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s;
-  }
-  .edu-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--black);
-    transform: translateX(-101%);
-    transition: transform 0.4s ease;
-    z-index: 0;
-  }
-  .edu-card:hover { border-color: var(--black); }
-  .edu-card:hover::before { transform: translateX(0); }
-  .edu-card:hover .edu-degree,
-  .edu-card:hover .edu-uni,
-  .edu-card:hover .edu-meta { color: var(--white); }
-  .edu-degree {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--ink);
-    margin-bottom: 0.4rem;
-    position: relative; z-index: 1;
-    transition: color 0.3s;
-  }
-  .edu-uni { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.6rem; position: relative; z-index: 1; transition: color 0.3s; }
-  .edu-meta {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--highlight);
-    letter-spacing: 0.06em;
-    position: relative; z-index: 1;
-    transition: color 0.3s;
-  }
-
-  /* ── CONTACT ── */
-  .contact-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-  }
-  .contact-intro {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.6rem, 3vw, 2.4rem);
-    font-weight: 700;
-    line-height: 1.2;
-    color: var(--ink);
-    margin-bottom: 1.2rem;
-  }
-  .contact-intro span { color: var(--highlight); }
-  .contact-sub { font-size: 0.95rem; color: var(--muted); max-width: 420px; }
-  .contact-links { display: flex; flex-direction: column; gap: 0.9rem; }
-  .contact-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: var(--card-bg);
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    padding: 1.1rem 1.4rem;
-    text-decoration: none;
-    color: var(--ink);
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s;
-  }
-  .contact-item::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--black);
-    transform: translateX(-101%);
-    transition: transform 0.35s ease;
-    z-index: 0;
-  }
-  .contact-item:hover { border-color: var(--black); }
-  .contact-item:hover::before { transform: translateX(0); }
-  .contact-item:hover .contact-item-label,
-  .contact-item:hover .contact-item-value,
-  .contact-item:hover .ci-icon { color: var(--white); }
-  .contact-item-label {
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    position: relative; z-index: 1;
-    transition: color 0.3s;
-  }
-  .contact-item-value {
-    font-size: 0.9rem;
-    font-weight: 500;
-    position: relative; z-index: 1;
-    transition: color 0.3s;
-  }
-  .ci-icon {
-    font-size: 1.2rem;
-    flex-shrink: 0;
-    position: relative; z-index: 1;
-    transition: color 0.3s;
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    text-align: center;
-    padding: 2rem 6vw;
-    border-top: 1px solid var(--border);
-    font-size: 0.78rem;
-    color: var(--muted);
-    background: var(--bg);
-  }
-  footer a { color: var(--black); text-decoration: none; font-weight: 600; }
-  footer a:hover { text-decoration: underline; }
-
-  /* ── KEYFRAMES ── */
   @keyframes slideInLeft {
     from { opacity: 0; transform: translateX(-40px); }
     to   { opacity: 1; transform: translateX(0); }
   }
 
-  /* ── RESPONSIVE ── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cccccc; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--highlight); }
+
   @media (max-width: 900px) {
-    .hero { grid-template-columns: 1fr; padding-top: 100px; }
+    .hero-layout { grid-template-columns: 1fr; gap: 2rem; }
     .edu-grid { grid-template-columns: 1fr; }
-    .contact-wrapper { grid-template-columns: 1fr; gap: 2rem; }
+    .contact-wrapper { grid-template-columns: 1fr; gap: 1.5rem; }
     .nav-links { display: none; }
-  }
-  @media (max-width: 640px) {
-    .stat-grid { grid-template-columns: 1fr; }
-    .skills-grid { grid-template-columns: 1fr; }
-    .certs-grid { grid-template-columns: 1fr; }
+    .page-panel { padding-top: 90px; padding-bottom: 120px; }
   }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-  <a class="nav-logo" href="#">Subhasish M.</a>
+  <a class="nav-logo" href="#" onclick="goToPage(0); return false;">Subhasish M.</a>
   <ul class="nav-links">
-    <li><a href="#experience"><span>Experience</span></a></li>
-    <li><a href="#skills"><span>Skills</span></a></li>
-    <li><a href="#certifications"><span>Certifications</span></a></li>
-    <li><a href="#education"><span>Education</span></a></li>
-    <li><a href="#contact"><span>Contact</span></a></li>
+    <li><a href="#" id="link-0" class="active" onclick="goToPage(0); return false;"><span>Home</span></a></li>
+    <li><a href="#" id="link-1" onclick="goToPage(1); return false;"><span>Experience</span></a></li>
+    <li><a href="#" id="link-2" onclick="goToPage(2); return false;"><span>Skills</span></a></li>
+    <li><a href="#" id="link-3" onclick="goToPage(3); return false;"><span>Certifications</span></a></li>
+    <li><a href="#" id="link-4" onclick="goToPage(4); return false;"><span>Education & Contact</span></a></li>
   </ul>
 </nav>
 
-<!-- HERO -->
-<section class="hero" id="home">
-  <div class="hero-left">
-    <div class="hero-eyebrow">Customer Success Leader</div>
-    <h1 class="hero-name">Subhasish<br><span>Mukherjee</span></h1>
-    <p class="hero-title">Senior Global Customer Success Leader with 4+ years driving enterprise retention across North America, EMEA, and Pan-India markets. Consultant to Fortune 100 company Blackstone.</p>
-    <div class="hero-ctas">
-      <a href="#contact" class="btn"><span>Get in Touch</span></a>
-      <a href="https://www.linkedin.com/in/subhasish-mukherjee-4337b5169/" target="_blank" class="btn btn-outline"><span>LinkedIn ↗</span></a>
-    </div>
-  </div>
-  <div class="hero-right">
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="stat-number">92<em>%</em></div>
-        <div class="stat-label">Annual Retention Rate</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">₹3.7<em>M</em></div>
-        <div class="stat-label">MRR Portfolio Managed</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">200<em>%</em></div>
-        <div class="stat-label">Key Account Growth</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">4<em>+</em></div>
-        <div class="stat-label">Years of Experience</div>
-      </div>
-    </div>
-    <div class="location-badge">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
-      Garifa, West Bengal, India &nbsp;·&nbsp; Open to Global / Remote Opportunities
-    </div>
-  </div>
-</section>
+<div class="book-container" id="bookContainer">
 
-<!-- EXPERIENCE -->
-<section id="experience">
-  <div class="section-header">
-    <span class="section-num">01</span>
-    <h2 class="section-title">Work Experience</h2>
-    <div class="section-line"></div>
-  </div>
-  <div class="timeline">
-
-    <div class="tl-item reveal">
-      <div class="tl-dot">NOW</div>
-      <div class="tl-content">
-        <div class="tl-header">
-          <div class="tl-role">Senior Customer Success Account Manager</div>
-          <div class="tl-period">May 2024 — Present</div>
+  <!-- PAGE 0: HERO (Home) -->
+  <div class="page-panel">
+    <div class="hero-layout">
+      <div class="hero-left">
+        <div class="hero-eyebrow">Customer Success Leader</div>
+        <h1 class="hero-name">Subhasish<br><span>Mukherjee</span></h1>
+        <p class="hero-title">Senior Global Customer Success Leader with 6+ years driving enterprise retention across North America, EMEA, and Pan-India markets. Consultant to Fortune 100 company Blackstone.</p>
+        <div class="hero-ctas">
+          <a href="#" onclick="goToPage(4); return false;" class="btn"><span>Get in Touch</span></a>
+          <a href="https://www.linkedin.com/in/subhasish-mukherjee-4337b5169/" target="_blank" class="btn btn-outline"><span>LinkedIn ↗</span></a>
         </div>
-        <div class="tl-company">Keka HR · Hyderabad · Full-time</div>
-        <ul class="tl-bullets">
-          <li>Directing a high-stakes enterprise portfolio of 65 accounts totalling ₹3.7M MRR with a 92% annual retention rate across Pan-India.</li>
-          <li>Achieved 200% growth in key accounts and consistently over-delivered on Upsell/Cross-sell targets for two consecutive quarters.</li>
-          <li>Developed a systematic CSM Playbook to optimise usage health and visibility — earned 3-time Google Review citations for service excellence.</li>
-          <li>Successfully secured Annual Targets for Health Checks, QBRs, and AHRs; over-achieved referral goals for two consecutive months.</li>
-        </ul>
       </div>
-    </div>
-
-    <div class="tl-item reveal">
-      <div class="tl-dot">24</div>
-      <div class="tl-content">
-        <div class="tl-header">
-          <div class="tl-role">Territory Manager</div>
-          <div class="tl-period">Feb 2024 — Apr 2024</div>
+      <div class="hero-right">
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-number">92<em>%</em></div>
+            <div class="stat-label">Annual Retention Rate</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">₹3.7<em>M</em></div>
+            <div class="stat-label">MRR Portfolio Managed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">200<em>%</em></div>
+            <div class="stat-label">Key Account Growth</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">6<em>+</em></div>
+            <div class="stat-label">Years of Experience</div>
+          </div>
         </div>
-        <div class="tl-company">HireMee · Bangalore · Full-time</div>
-        <ul class="tl-bullets">
-          <li>Led full-cycle sales process and territory strategy for the Indian market, focusing on long-term account nurturing.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="tl-item reveal">
-      <div class="tl-dot">22</div>
-      <div class="tl-content">
-        <div class="tl-header">
-          <div class="tl-role">Account Manager</div>
-          <div class="tl-period">Jul 2022 — Jan 2024</div>
-        </div>
-        <div class="tl-company">iMcoha · Pune · Full-time</div>
-        <ul class="tl-bullets">
-          <li>Scaled a $159K ARR portfolio of 80 accounts across the US and ROW, delivering 11x growth through precise SPOC engagement.</li>
-          <li>Maintained an 86% retention rate while overachieving sales targets by 125% in Q1 2023 for the international market.</li>
-          <li>Secured 4 high-value referrals via C-level relationship cultivation in the US market.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="tl-item reveal">
-      <div class="tl-dot">20</div>
-      <div class="tl-content">
-        <div class="tl-header">
-          <div class="tl-role">Financial Analyst</div>
-          <div class="tl-period">Jan 2020 — Jun 2022</div>
-        </div>
-        <div class="tl-company">Wipro · Gurgaon · Full-time (Consulting: Blackstone)</div>
-        <ul class="tl-bullets">
-          <li>Managed and trained a team of 5 analysts to deliver complex financial deliverables for EMEA investment clients including Fortune 100 firm Blackstone.</li>
-          <li>Engineered a 'Disposable Asset Tracker' and automated AP Ageing dashboards — decreased audit findings by 20% and minimised overall risk.</li>
-          <li>Spearheaded Quarterly Management Reports (QMR) for high-level investment growth tracking with 100% accuracy in loan reconciliations for European Real Estate portfolios.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="tl-item reveal">
-      <div class="tl-dot">16</div>
-      <div class="tl-content">
-        <div class="tl-header">
-          <div class="tl-role">Business Development Representative</div>
-          <div class="tl-period">Sep 2016 — May 2017</div>
-        </div>
-        <div class="tl-company">Infinity Gurus · Kolkata · Full-time</div>
-        <ul class="tl-bullets">
-          <li>Identified and closed prospective clients for content and website building projects within the US market.</li>
-        </ul>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- SKILLS -->
-<section id="skills">
-  <div class="section-header">
-    <span class="section-num">02</span>
-    <h2 class="section-title">Core Skills</h2>
-    <div class="section-line"></div>
-  </div>
-  <div class="skills-grid">
-    <div class="skill-card reveal"><div class="skill-icon">🛡️</div><div class="skill-name">Churn Mitigation Strategy</div></div>
-    <div class="skill-card reveal"><div class="skill-icon">🌏</div><div class="skill-name">Cross-Border Business Operations</div></div>
-    <div class="skill-card reveal"><div class="skill-icon">📋</div><div class="skill-name">CSM Playbook Development</div></div>
-    <div class="skill-card reveal"><div class="skill-icon">📊</div><div class="skill-name">Data Visualization (Power BI & Excel)</div></div>
-    <div class="skill-card reveal"><div class="skill-icon">💼</div><div class="skill-name">Enterprise Portfolio Management</div></div>
-    <div class="skill-card reveal"><div class="skill-icon">📈</div><div class="skill-name">Financial Modeling & DCF Analysis</div></div>
-    <div class="skill-card reveal"><div class="skill-icon">💰</div><div class="skill-name">Net Revenue Retention (NRR)</div></div>
-    <div class="skill-card reveal"><div class="skill-icon">🔮</div><div class="skill-name">Revenue Forecasting & Growth Multiples</div></div>
-    <div class="skill-card reveal"><div class="skill-icon">🤝</div><div class="skill-name">Stakeholder Management (C-Suite)</div></div>
-    <div class="skill-card reveal"><div class="skill-icon">🌐</div><div class="skill-name">Strategic Account Management (US & EMEA)</div></div>
-    <div class="skill-card reveal"><div class="skill-icon">📣</div><div class="skill-name">Consultative Selling & Upselling</div></div>
-    <div class="skill-card reveal"><div class="skill-icon">⚙️</div><div class="skill-name">Process Automation & Efficiency Engineering</div></div>
-  </div>
-</section>
-
-<!-- CERTIFICATIONS -->
-<section id="certifications">
-  <div class="section-header">
-    <span class="section-num">03</span>
-    <h2 class="section-title">Certifications</h2>
-    <div class="section-line"></div>
-  </div>
-  <div class="certs-grid">
-    <div class="cert-card reveal">
-      <div class="cert-issuer">Amazon Web Services (AWS)</div>
-      <div class="cert-name">Introduction to Generative AI — Art of the Possible</div>
-      <div class="cert-date">May 2024</div>
-    </div>
-    <div class="cert-card reveal">
-      <div class="cert-issuer">Salesforce</div>
-      <div class="cert-name">Hiker Badge</div>
-      <div class="cert-date">Aug 2022</div>
-    </div>
-    <div class="cert-card reveal">
-      <div class="cert-issuer">LinkedIn Learning</div>
-      <div class="cert-name">The Non-Technical Skills of Effective Data Scientists</div>
-      <div class="cert-date">Jul 2022</div>
-    </div>
-    <div class="cert-card reveal">
-      <div class="cert-issuer">LinkedIn Learning</div>
-      <div class="cert-name">The Neuroscience of Selling Remotely</div>
-      <div class="cert-date">Jul 2022</div>
-    </div>
-    <div class="cert-card reveal">
-      <div class="cert-issuer">Udemy</div>
-      <div class="cert-name">MS Excel — Data Visualization, Charts and Graphs</div>
-      <div class="cert-date">Sep 2020</div>
-    </div>
-    <div class="cert-card reveal">
-      <div class="cert-issuer">CFA Institute</div>
-      <div class="cert-name">Certificate of Investment Foundations</div>
-      <div class="cert-date">Dec 2019 — Jan 2020</div>
-    </div>
-    <div class="cert-card reveal">
-      <div class="cert-issuer">Corporate Finance Institute</div>
-      <div class="cert-name">Fixed Income</div>
-      <div class="cert-date">Nov — Dec 2019</div>
-    </div>
-    <div class="cert-card reveal">
-      <div class="cert-issuer">NSIM</div>
-      <div class="cert-name">Equity Derivatives, Research Analyst</div>
-      <div class="cert-date">Jun — Aug 2019</div>
-    </div>
-  </div>
-</section>
-
-<!-- EDUCATION -->
-<section id="education">
-  <div class="section-header">
-    <span class="section-num">04</span>
-    <h2 class="section-title">Education</h2>
-    <div class="section-line"></div>
-  </div>
-  <div class="edu-grid">
-    <div class="edu-card reveal">
-      <div class="edu-degree">Masters of Business Administration in Finance</div>
-      <div class="edu-uni">Savitribai Phule Pune University · Pune</div>
-      <div class="edu-meta">2018 – 2020 &nbsp;·&nbsp; GPA 6.7/10</div>
-    </div>
-    <div class="edu-card reveal">
-      <div class="edu-degree">Bachelor of Commerce (Hons) in Finance & Accounting</div>
-      <div class="edu-uni">West Bengal State University · Barrackpore</div>
-      <div class="edu-meta">2013 – 2016 &nbsp;·&nbsp; GPA 5.3/10</div>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact">
-  <div class="section-header">
-    <span class="section-num">05</span>
-    <h2 class="section-title">Get in Touch</h2>
-    <div class="section-line"></div>
-  </div>
-  <div class="contact-wrapper">
-    <div class="reveal">
-      <div class="contact-intro">Let's build something<br><span>great together</span></div>
-      <p class="contact-sub">Open to Customer Success leadership roles, enterprise consulting engagements, and strategic partnerships across global markets.</p>
-    </div>
-    <div class="contact-links reveal">
-      <a href="mailto:subhasish.mukherjee1412@outlook.com" class="contact-item">
-        <div class="ci-icon">✉️</div>
-        <div>
-          <div class="contact-item-label">Email</div>
-          <div class="contact-item-value">subhasish.mukherjee1412@outlook.com</div>
-        </div>
-      </a>
-      <a href="tel:+919804581980" class="contact-item">
-        <div class="ci-icon">📞</div>
-        <div>
-          <div class="contact-item-label">Phone</div>
-          <div class="contact-item-value">+91 98045 81980</div>
-        </div>
-      </a>
-      <a href="https://www.linkedin.com/in/subhasish-mukherjee-4337b5169/" target="_blank" class="contact-item">
-        <div class="ci-icon">💼</div>
-        <div>
-          <div class="contact-item-label">LinkedIn</div>
-          <div class="contact-item-value">linkedin.com/in/subhasish-mukherjee-4337b5169</div>
-        </div>
-      </a>
-      <div class="contact-item">
-        <div class="ci-icon">📍</div>
-        <div>
-          <div class="contact-item-label">Location</div>
-          <div class="contact-item-value">Garifa, West Bengal, India</div>
+        <div class="location-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+          Garifa, West Bengal, India &nbsp;·&nbsp; Open to Global Opportunities
         </div>
       </div>
     </div>
   </div>
-</section>
+
+  <!-- PAGE 1: EXPERIENCE -->
+  <div class="page-panel">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Work Experience</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="timeline-container">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot">NOW</div>
+          <div class="tl-content">
+            <div class="tl-header">
+              <div class="tl-role">Senior Customer Success Account Manager</div>
+              <div class="tl-period">May 2024 — Present</div>
+            </div>
+            <div class="tl-company">Keka HR · Hyderabad · Full-time</div>
+            <ul class="tl-bullets">
+              <li>Directing a high-stakes enterprise portfolio of 65 accounts totalling ₹3.7M MRR with a 92% annual retention rate across Pan-India.</li>
+              <li>Achieved 200% growth in key accounts and consistently over-delivered on Upsell/Cross-sell targets for two consecutive quarters.</li>
+              <li>Developed a systematic CSM Playbook to optimise usage health and visibility — earned 3-time Google Review citations for service excellence.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">24</div>
+          <div class="tl-content">
+            <div class="tl-header">
+              <div class="tl-role">Territory Manager</div>
+              <div class="tl-period">Feb 2024 — Apr 2024</div>
+            </div>
+            <div class="tl-company">HireMee · Bangalore · Full-time</div>
+            <ul class="tl-bullets">
+              <li>Led full-cycle sales process and territory strategy for the Indian market, focusing on long-term account nurturing.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">22</div>
+          <div class="tl-content">
+            <div class="tl-header">
+              <div class="tl-role">Account Manager</div>
+              <div class="tl-period">Jul 2022 — Jan 2024</div>
+            </div>
+            <div class="tl-company">iMocah · Pune · Full-time</div>
+            <ul class="tl-bullets">
+              <li>Scaled a $159K ARR portfolio of 80 accounts across the US and ROW, delivering 11x growth through precise SPOC engagement.</li>
+              <li>Maintained an 86% retention rate while overachieving sales targets by 125% in Q1 2023 for the international market.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">20</div>
+          <div class="tl-content">
+            <div class="tl-header">
+              <div class="tl-role">Financial Analyst</div>
+              <div class="tl-period">Jan 2020 — Jun 2022</div>
+            </div>
+            <div class="tl-company">Wipro · Gurgaon · Full-time (Consulting: Blackstone)</div>
+            <ul class="tl-bullets">
+              <li>Managed and trained a team of 5 analysts to deliver complex financial deliverables for EMEA investment clients including Fortune 100 firm Blackstone.</li>
+              <li>Engineered a 'Disposable Asset Tracker' and automated dashboards — decreased audit findings by 20%.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: SKILLS -->
+  <div class="page-panel">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Core Skills</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-wrapper">
+      <div class="skills-grid">
+        <div class="skill-card"><div class="skill-icon">🛡️</div><div class="skill-name">Churn Mitigation Strategy</div></div>
+        <div class="skill-card"><div class="skill-icon">🌏</div><div class="skill-name">Cross-Border Business Operations</div></div>
+        <div class="skill-card"><div class="skill-icon">📋</div><div class="skill-name">CSM Playbook Development</div></div>
+        <div class="skill-card"><div class="skill-icon">📊</div><div class="skill-name">Data Visualization (Power BI & Excel)</div></div>
+        <div class="skill-card"><div class="skill-icon">💼</div><div class="skill-name">Enterprise Portfolio Management</div></div>
+        <div class="skill-card"><div class="skill-icon">📈</div><div class="skill-name">Financial Modeling & DCF Analysis</div></div>
+        <div class="skill-card"><div class="skill-icon">💰</div><div class="skill-name">Net Revenue Retention (NRR)</div></div>
+        <div class="skill-card"><div class="skill-icon">🔮</div><div class="skill-name">Revenue Forecasting & Growth Multiples</div></div>
+        <div class="skill-card"><div class="skill-icon">🤝</div><div class="skill-name">Stakeholder Management (C-Suite)</div></div>
+        <div class="skill-card"><div class="skill-icon">🌐</div><div class="skill-name">Strategic Account Management (US & EMEA)</div></div>
+        <div class="skill-card"><div class="skill-icon">📣</div><div class="skill-name">Consultative Selling & Upselling</div></div>
+        <div class="skill-card"><div class="skill-icon">⚙️</div><div class="skill-name">Process Automation & Efficiency Engineering</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 3: CERTIFICATIONS -->
+  <div class="page-panel">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Certifications</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="certs-wrapper">
+      <div class="certs-grid">
+        <div class="cert-card"><div class="cert-issuer">AWS</div><div class="cert-name">Introduction to Generative AI — Art of the Possible</div><div class="cert-date">2024</div></div>
+        <div class="cert-card"><div class="cert-issuer">Salesforce</div><div class="cert-name">Hiker Badge</div><div class="cert-date">2022</div></div>
+        <div class="cert-card"><div class="cert-issuer">LinkedIn Learning</div><div class="cert-name">The Non-Technical Skills of Effective Data Scientists</div><div class="cert-date">2022</div></div>
+        <div class="cert-card"><div class="cert-issuer">LinkedIn Learning</div><div class="cert-name">The Neuroscience of Selling Remotely</div><div class="cert-date">2022</div></div>
+        <div class="cert-card"><div class="cert-issuer">Udemy</div><div class="cert-name">MS Excel — Data Visualization, Charts and Graphs</div><div class="cert-date">2020</div></div>
+        <div class="cert-card"><div class="cert-issuer">CFA Institute</div><div class="cert-name">Certificate of Investment Foundations</div><div class="cert-date">2020</div></div>
+        <div class="cert-card"><div class="cert-issuer">Corporate Finance Institute</div><div class="cert-name">Fixed Income</div><div class="cert-date">2019</div></div>
+        <div class="cert-card"><div class="cert-issuer">NISM</div><div class="cert-name">Equity Derivatives & Research Analyst</div><div class="cert-date">2019</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 4: EDUCATION & CONTACT -->
+  <div class="page-panel">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Education & Contact</h2>
+      <div class="section-line"></div>
+    </div>
+    
+    <div class="edu-grid">
+      <div class="edu-card">
+        <div class="edu-degree">Masters of Business Administration in Finance</div>
+        <div class="edu-uni">Savitribai Phule Pune University · Pune</div>
+        <div class="edu-meta">2018 – 2020 &nbsp;·&nbsp; GPA 6.7/10</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-degree">Bachelor of Commerce (Hons) in Finance & Accounting</div>
+        <div class="edu-uni">West Bengal State University · Barrackpore</div>
+        <div class="edu-meta">2013 – 2016 &nbsp;·&nbsp; GPA 5.3/10</div>
+      </div>
+    </div>
+
+    <div class="contact-wrapper">
+      <div>
+        <div class="contact-intro">Let's build something<br><span>great together</span></div>
+        <p class="contact-sub">Open to Customer Success leadership roles, enterprise consulting engagements, and strategic partnerships across global markets.</p>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:subhasish.mukherjee1412@outlook.com" class="contact-item">
+          <div class="ci-icon">✉️</div>
+          <div>
+            <div class="contact-item-label">Email</div>
+            <div class="contact-item-value">subhasish.mukherjee1412@outlook.com</div>
+          </div>
+        </a>
+        <a href="https://www.linkedin.com/in/subhasish-mukherjee-4337b5169/" target="_blank" class="contact-item">
+          <div class="ci-icon">💼</div>
+          <div>
+            <div class="contact-item-label">LinkedIn</div>
+            <div class="contact-item-value">linkedin.com/in/subhasish-mukherjee-4337b5169</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="page-nav-arrows">
+  <button class="arrow-btn" onclick="movePage(-1)" title="Previous Page">←</button>
+  <button class="arrow-btn" onclick="movePage(1)" title="Next Page">→</button>
+</div>
 
 <footer>
-  <p>© 2025 Subhasish Mukherjee &nbsp;·&nbsp; <a href="https://www.linkedin.com/in/subhasish-mukherjee-4337b5169/" target="_blank">LinkedIn</a> &nbsp;·&nbsp; Built with care</p>
+  <p>© 2026 Subhasish Mukherjee &nbsp;·&nbsp; <a href="https://www.linkedin.com/in/subhasish-mukherjee-4337b5169/" target="_blank">LinkedIn Profile</a> &nbsp;·&nbsp; Engineered for smooth book progression</p>
 </footer>
 
 <script>
-  // Scroll-triggered left→right reveal
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        // stagger siblings slightly
-        const siblings = entry.target.parentElement.querySelectorAll('.reveal, .section-header');
-        siblings.forEach((el, idx) => {
-          if (el === entry.target) {
-            setTimeout(() => el.classList.add('visible'), idx * 80);
-          }
-        });
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.12 });
+  let currentPage = 0;
+  const totalPages = 5;
+  const container = document.getElementById('bookContainer');
 
-  document.querySelectorAll('.reveal, .section-header').forEach(el => observer.observe(el));
+  function goToPage(pageIdx) {
+    if(pageIdx < 0 || pageIdx >= totalPages) return;
+    currentPage = pageIdx;
+    
+    container.style.transform = `translateX(-${currentPage * 100}vw)`;
+    
+    document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
+    const activeLink = document.getElementById(`link-${currentPage}`);
+    if(activeLink) activeLink.classList.add('active');
+  }
+
+  function movePage(direction) {
+    let target = currentPage + direction;
+    if(target >= 0 && target < totalPages) {
+      goToPage(target);
+    }
+  }
+
+  let baseTimeout;
+  window.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) > 35) {
+      e.preventDefault();
+      clearTimeout(baseTimeout);
+      baseTimeout = setTimeout(() => {
+        if(e.deltaY > 0) movePage(1);
+        else movePage(-1);
+      }, 70);
+    }
+  }, { passive: false });
+
+  window.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowRight' || e.key === 'PageDown') movePage(1);
+    if(e.key === 'ArrowLeft' || e.key === 'PageUp') movePage(-1);
+  });
 </script>
 </body>
 </html>
